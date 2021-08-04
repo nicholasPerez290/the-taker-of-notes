@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const data = require('../db/db')
+let data = require('../db/db')
 console.log(data)
 
 module.exports = (app) => {
@@ -17,6 +17,7 @@ module.exports = (app) => {
       res.json(data);
     })
     app.delete("/api/notes/:id", function (req, res) {
+      let i = 0;
       let id = JSON.parse(req.params.id)
       let ary = []
       for(let i = 0; i < data.length; i++){
@@ -24,10 +25,14 @@ module.exports = (app) => {
           ary.push(data[i]);
         }
       }
+      for(let i = 0; i < ary.length; i++) {
+        ary[i].id = i;
+      }
       fs.writeFile("./db/db.json", JSON.stringify(ary), function (error, data) {
         if (error) throw error;
         console.log('successful')
       })
+      data = ary
       res.json(ary)
     })
 }
